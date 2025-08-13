@@ -1,0 +1,406 @@
+//1 
+
+
+CREATE TABLE transactions (
+    transaction_id INT PRIMARY KEY,
+    user_id INT,
+    payment_method VARCHAR(255),
+    amount DECIMAL(10, 2),
+    transaction_date DATE,
+    status VARCHAR(255)
+);
+
+
+
+INSERT INTO transactions (transaction_id, user_id, payment_method, amount, transaction_date, status) VALUES
+(101, 202, 'Credit Card', 200.43, '2025-02-16', 'Completed'),
+(102, 203, 'Netbanking', 3233.10, '2025-03-11', 'Failed'),
+(103, 203, 'Netbanking', 1195.35, '2025-02-24', 'Failed'),
+(104, 203, 'Debit Card', 376.11, '2025-03-10', 'Failed'),
+(105, 203, 'Netbanking', 112.01, '2025-04-04', 'Failed'),
+(106, 203, 'Credit Card', 111.10, '2025-09-12', 'Failed'),
+(107, 203, 'Debit Card', 2344.50, '2025-10-03', 'Failed');
+
+
+
+select * from transactions;
+
+
+
+SELECT user_id,COUNT(*)as failed_transactions , COUNT (DISTINCT payment_method) FROM transactions where status ='Failed' group by user_id HAVING count(*)>5 ;
+
+
+
+
+CREATE TABLE support_tickets (
+    id SERIAL PRIMARY KEY,
+    customer_id INT NOT NULL,
+    created_at TIMESTAMP NOT NULL,
+    resolved_at TIMESTAMP
+);
+
+
+
+INSERT INTO support_tickets (id, customer_id, created_at, resolved_at)
+VALUES
+(1, 1, '2023-12-21 05:42:00', '2024-01-01 05:42:00'),
+(2, 2, '2023-07-08 14:22:00', NULL),
+(3, 3, '2023-05-22 08:54:00', '2023-06-17 08:54:00');
+
+
+
+SELECT * from support_tickets;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//3
+
+
+CREATE TABLE customers (
+    id INT PRIMARY KEY,
+    name VARCHAR(255),
+    city VARCHAR(255)
+);
+
+
+
+
+CREATE TABLE orders (
+    id INT PRIMARY KEY,
+    customer_id INT,
+    amount DECIMAL(10,2),
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+
+
+INSERT INTO customers (id, name, city) VALUES
+(1, 'Customer 1', 'Los Angeles'),
+(2, 'Customer 2', 'Chicago'),
+(3, 'Customer 3', 'Chicago');
+
+-- Insert data into orders
+INSERT INTO orders (id, customer_id, amount) VALUES
+(1, 1, 150.75),
+(2, 2, 230.50),
+(3, 3, 345.25);
+
+
+
+
+
+
+
+
+
+
+// 4
+
+
+CREATE TABLE products (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    category VARCHAR(50),
+    is_available INT
+);
+
+
+CREATE TABLE requests (
+    product_id INT,
+    client_email VARCHAR(100),
+    FOREIGN KEY (product_id) REFERENCES products(id)
+);
+
+
+
+
+
+INSERT INTO products (id, name, category, is_available) VALUES
+(1, 'PromoPro', 'beauty products', 1),
+(2, 'AdVantage', 'outdoor gear', 1),
+(3, 'MarketMagnet', 'sports equipment', 1),
+(5, 'AdBlitz', 'beauty products', 0);
+
+
+
+
+
+INSERT INTO requests (product_id, client_email) VALUES
+-- (1, 'salgate1@fc2.com'),
+-- (1, 'lwycliff6@list-manage.com'),
+-- (1, 'ekimbleyf@scientificamerican.com'),
+-- (2, 'bgooro@spotify.com'),
+(2, 'bgooroa@spotify.com'),
+(2, 'bgoorop@spotify.com')
+-- (2, 'vsamwayest@bbb.org'),
+-- (3, 'apappin0@yellowbook.com'),
+-- (3, 'ringreyb@businessinsider.com'),
+-- (3, 'mrysonm@istockphoto.com'),
+-- (5, 'ayushin1c@opera.com');
+
+
+
+SELECT p.name ,COUNT(*)
+from products p join requests r on p.id = r.product_id
+WHERE p.is_available = 1 group by p.name order by 
+COUNT(*) DESC ,p.name 
+
+
+
+
+
+//5 
+
+CREATE TABLE campaigns (
+    id INT PRIMARY KEY,
+    name VARCHAR(100),
+    is_active INT
+);
+
+
+
+CREATE TABLE engagements (
+    campaign_id INT,
+    views INT,
+    clicks INT,
+    FOREIGN KEY (campaign_id) REFERENCES campaigns(id)
+);
+
+
+INSERT INTO campaigns (id, name, is_active) VALUES
+(1, 'SummerSavings', 1),
+(2, 'FallFrenzy', 1),
+(3, 'WinterWonderland', 0);
+
+
+
+INSERT INTO engagements (campaign_id, views, clicks) VALUES
+(1, 100, 10),
+(1, 150, 20),
+(2, 200, 30),
+(2, 250, 40),
+(3, 300, 50),
+(1, 120, 15);
+
+
+
+SELECT c.name ,COUNT(e.campaign_id)as total_enagements, (SUM(e.views) +  SUM(e.clicks))
+FROM campaigns c JOIN engagements e ON c.id = e.campaign_id WHERE is_active=1
+ group by c.name
+
+
+
+
+
+
+
+// 6
+
+
+-- Create accounts table
+CREATE TABLE accounts (
+    id INT PRIMARY KEY,
+    email VARCHAR(255)
+);
+
+-- Create reports table
+CREATE TABLE reports (
+    account_id INT,
+    dt VARCHAR(19),
+    amount DECIMAL(6, 2),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+);
+
+-- Insert data into accounts table
+INSERT INTO accounts (id, email) VALUES
+(1, 'hratke0@disqus.com'),
+(2, 'lcaiger1@si.edu'),
+(3, 'gburkett2@vinaora.com');
+
+-- Insert data into reports table
+INSERT INTO reports (account_id, dt, amount) VALUES
+(1, '2023-05-27 01:46:19', 830.45),
+(2, '2023-01-15 09:23:21', 2518.18),
+(3, '2023-05-08 01:44:41', 4637.39),
+(1, '2023-06-30 15:02:03', 3953.69),
+(2, '2023-12-05 04:39:31', 3357.99),
+(3, '2023-02-03 09:41:00', 1907.38),
+(1, '2022-12-30 04:05:57', 1217.29),
+(2, '2024-01-24 14:18:07', 2441.66),
+(3, '2024-01-05 23:19:31', 3055.20),
+(1, '2023-05-26 01:54:24', 2077.36);
+
+
+
+SELECT a.email, ROUND(SUM(s.amount),2) FROM accounts a 
+JOIN reports s on a.id = s.account_id
+WHERE EXTRACT(YEAR FROM s.dt::date)=2023
+group by a.email
+order by a.email;
+
+
+
+
+// 7 
+
+CREATE TABLE devices (
+    id INT NOT NULL PRIMARY KEY,
+    mac_address VARCHAR(255)
+);
+
+-- Create scanned_files table
+CREATE TABLE scanned_files (
+    device_id INT,
+    filename VARCHAR(255),
+    is_infected SMALLINT,
+    FOREIGN KEY (device_id) REFERENCES devices(id)
+);
+
+INSERT INTO devices (id, mac_address) VALUES
+(1, '66-0F-84-41-B8-8E'),
+(2, 'A6-1A-2F-3A-7B-83'),
+(3, '76-CD-24-48-F0-DD');
+
+
+
+INSERT INTO scanned_files (device_id, filename, is_infected) VALUES
+(1, 'File1.mp3', 0),
+(1, 'File2.xls', 1),
+(2, 'File3.doc', 0),
+(2, 'File4.ppt', 1),
+(2, 'File5.mp3', 1),
+(3, 'File6.xls', 0),
+(3, 'File7.doc', 1),
+(3, 'File8.ppt', 0),
+(3, 'File9.mp3', 1),
+(3, 'File10.xls', 0);
+
+
+SELECT  d.mac_address, COUNT (s.device_id), SUM(CASE when s.is_infected=1 then 1 else 0 end) 
+FROM devices d join scanned_files s on d.id = s.device_id    
+group by d.mac_address order by d.mac_address
+
+
+
+
+
+// 8 -- ===================================
+-- CREATE TABLES
+-- ===================================
+
+-- Create coins table
+CREATE TABLE coins (
+    id INT NOT NULL PRIMARY KEY,
+    name VARCHAR(255)
+);
+
+-- Create transactions table
+CREATE TABLE transaction (
+    coin_id INT,
+    dt VARCHAR(19),
+    amount DECIMAL(5, 2),
+    FOREIGN KEY (coin_id) REFERENCES coins(id)
+);
+
+-- ===================================
+-- INSERT DATA
+-- ===================================
+
+-- Insert data into coins table
+INSERT INTO coins (id, name) VALUES
+(1, 'BitCash'),
+(2, 'Etherium'),
+(3, 'Litecoin');
+
+-- Insert data into transactions table
+INSERT INTO transaction (coin_id, dt, amount) VALUES
+(2, '2022-12-16 20:42:10', 45.54),
+(2, '2023-11-05 09:27:11', 53.30),
+(3, '2023-12-05 06:45:23', 71.51),
+(3, '2023-01-19 01:43:25', 97.18),
+(3, '2024-01-24 13:34:00', 86.68),
+(1, '2023-05-07 05:30:06', 25.60),
+(2, '2023-03-08 08:07:20', 40.11),
+(3, '2023-08-13 10:44:54', 87.54);
+
+
+SELECT * FROM transaction
+
+
+
+SELECT c.name, ROUND(SUM(t.amount),2),COUNT (*)
+FROM coins c join 
+transaction t  
+on c.id = t.coin_id 
+WHERE EXTRACT (YEAR FROM t.dt::date)= 2023
+group by c.name
+
+
+// 9 
+
+
+
+CREATE TABLE customer (
+    id INT NOT NULL PRIMARY KEY,
+    email VARCHAR(255)
+);
+
+CREATE TABLE domains (
+    customer_id INT,
+    name VARCHAR(255),
+    FOREIGN KEY (customer_id) REFERENCES customer(id)
+);
+
+
+INSERT INTO customer (id, email) VALUES
+(1, 'ebayldon0@washingtonpost.com'),
+(2, 'agammade1@comcast.net'),
+(3, 'goloshkin2@reference.com'),
+(4, 'cantonescu3@earthlink.net'),
+(5, 'fparzis4@ow.ly'),
+(6, 'cpetroulis5@shutterfly.com'),
+(7, 'tbeels6@bbb.org'),
+(8, 'zmacturlough7@4shared.com'),
+(9, 'eshury8@skype.com'),
+(10, 'jfehners9@github.io');
+
+
+INSERT INTO domains (customer_id, name) VALUES
+(1, 'bfilipa.net'),
+(1, 'gsparsholti.net'),
+(1, 'jhughsr.org'),
+(2, 'scopas8.net'),
+(2, 'cglison1u.org'),
+(3, 'tginiz.com'),
+(3, 'arubinowitsch2l.net'),
+(3, 'clockyear2m.org'),
+(4, 'sfinigand.com'),
+(4, 'vborrelt.net');
+
+
+
+
+SELECT c.email , COUNT(*) 
+FROM customer c join
+domains s on c.id = s.customer_id  
+group by c.email order by c.email; 
+
+
+
