@@ -706,6 +706,55 @@ limit 3
 
 
 
+// 16
+CREATE TABLE applicants (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL
+);
+ 
+-- Appointments table
+CREATE TABLE appointments (
+    applicant_id INT,
+    dt DATE,
+    is_received INT CHECK (is_received IN (0,1)),
+    FOREIGN KEY (applicant_id) REFERENCES applicants(id)
+);
+ 
+-- Insert data into applicants
+INSERT INTO applicants (id, email) VALUES
+(1, 'nkienzle0@spiegel.de'),
+(2, 'alaste1@bbc.co.uk'),
+(3, 'jiochanany2@ow.ly'),
+(4, 'bsenn3@salon.com'),
+(5, 'bwhittall4@nhs.uk');
+ 
+-- Insert data into appointments
+INSERT INTO appointments (applicant_id, dt, is_received) VALUES
+(1, '2024-04-27', 0),
+(2, '2024-04-01', 0),
+(3, '2024-04-15', 0),
+(4, '2024-03-27', 0),
+(5, '2024-03-26', 1);
+ 
+
+
+
+
+
+SELECT 
+a.email,
+s.dt,
+(make_date(2024, 04, 10) - s.dt)
+FROM 
+applicants a
+JOIN 
+appointments s
+on a.id = s.applicant_id
+
+WHERE s.is_received = 0
+and (make_date(2024, 04, 10) - s.dt) > 0
+group by a.email, s.dt
+order by s.dt asc, a.email 
 
 
 
