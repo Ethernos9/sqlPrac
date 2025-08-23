@@ -759,3 +759,60 @@ order by s.dt asc, a.email
 
 
 
+// 17
+
+
+CREATE TABLE applicant (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL
+);
+
+ 
+-- Create appointments table
+CREATE TABLE appointment (
+    applicant_id INT,
+    dt VARCHAR(19),
+    FOREIGN KEY (applicant_id) REFERENCES applicant(id)
+);
+ 
+-- Insert sample data into applicants
+INSERT INTO applicant (id, email) VALUES
+(1, 'rastadtt0@nsagram.com'),
+(2, 'sgarmody1@salford.ac.uk'),
+(3, 'mgreenslade2@statetx.us');
+ 
+-- Insert sample data into appointments
+INSERT INTO appointment (applicant_id, dt) VALUES
+(1, '2024-05-26 01:35:43'),
+(2, '2024-05-27 16:39:28'),
+(3, '2024-05-18 19:28:52');
+
+
+
+
+-- TRIM(TO_CHAR(ap.dt::timestamp,'DAY'))='sunday'
+
+SELECT 
+a.email,
+ap.dt,
+CASE EXTRACT (
+DOW FROM ap.dt::timeStamp
+)
+WHEN  0 then 'Sunday'
+WHEN 6 then 'Saturday'
+
+END as day_name
+
+FROM 
+
+applicant a 
+join appointment ap
+on a.id = ap.applicant_id
+WHERE EXTRACT (DOW FROM ap.dt :: timestamp) in(0,6)
+
+
+ 
+
+
+
+
