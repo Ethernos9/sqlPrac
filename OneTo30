@@ -792,6 +792,9 @@ INSERT INTO appointment (applicant_id, dt) VALUES
 
 -- TRIM(TO_CHAR(ap.dt::timestamp,'DAY'))='sunday'
 
+
+
+
 SELECT 
 a.email,
 ap.dt,
@@ -811,8 +814,55 @@ on a.id = ap.applicant_id
 WHERE EXTRACT (DOW FROM ap.dt :: timestamp) in(0,6)
 
 
+
+//18 
  
 
+INSERT INTO countries (id, name) VALUES
+(1, 'Azerbaijan'),
+(2, 'Colombia'),
+(3, 'China');
 
+
+
+-- Insert sample data into domains
+INSERT INTO domain (country_id, name, is_active) VALUES
+(1, 'angelfire.com', TRUE),
+(1, 'free.fr', TRUE),
+(1, 'google.cn', TRUE),
+(1, 'nationalgeographic.com', TRUE),
+(1, 'ovh.net', TRUE),
+(1, 'surveymonkey.com', TRUE),
+(1, 'twitpic.com', TRUE),
+ 
+(2, 'ameblo.jp', TRUE),
+(2, 'berkeley.edu', TRUE),
+(2, 'multiply.com', TRUE),
+(2, 'redcross.org', TRUE),
+(2, 'sourceforge.net', TRUE),
+ 
+(3, 'hc360.com', TRUE),
+(3, 'liveinternet.ru', TRUE),
+(3, 'squidoo.com', TRUE),
+(3, 'technorati.com', TRUE),
+(3, 'webnode.com', TRUE),
+(3, 'yahoo.co.jp', TRUE),
+ 
+(1, '1und1.de', FALSE),
+(1, 'qq.com', FALSE);
+
+
+
+SELECT c.name, 
+COUNT(*)
+FROM 
+countries c
+join domain d
+on c.id= d.country_id
+where d.is_Active=true
+group by c.name 
+order by c.name
+
+ 
 
 
