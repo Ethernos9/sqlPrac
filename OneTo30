@@ -863,6 +863,344 @@ where d.is_Active=true
 group by c.name 
 order by c.name
 
+
+
+
+
+//19
+
+
+CREATE TABLE domains (
+    name VARCHAR(255) PRIMARY KEY,
+    next_renewal_date VARCHAR(19) NOT NULL
+);
+
+-- Insert sample data
+INSERT INTO domains (name, next_renewal_date) VALUES
+('wired.com', '2024-06-14 00:10:12'),
+('blogger.com', '2024-07-18 05:54:57'),
+('com.com', '2024-07-21 02:57:25');
+
+
+
+
+SELECT name, next_renewal_date,
+       next_renewal_date::date - make_date(2024,04,10) as diff
+FROM domains;
+
+
+
+
+
+//20
+
+
+CREATE TABLE userss (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL
+);
+
+-- Create transactions table
+CREATE TABLE transactions (
+    user_id INT REFERENCES userss(id),
+    dt VARCHAR(19) NOT NULL,
+    amount DECIMAL(5,2) NOT NULL
+);
+
+
+
+INSERT INTO userss (id, email) VALUES
+(1, 'bblaszczynski0@devhub.com'),
+(2, 'dwookey1@chronoengine.com'),
+(3, 'flerway2@wikipedia.org');
+
+
+
+-- Insert transactions data
+INSERT INTO transactions (user_id, dt, amount) VALUES
+(1, '2024-02-23 19:30:03', 942.50),
+(1, '2024-03-07 09:01:15', 855.22),
+(1, '2024-04-01 04:18:41', 253.35),
+(1, '2024-04-07 02:40:58', 886.88),
+
+(2, '2024-02-25 05:11:39', 957.77),
+(2, '2024-03-06 03:00:40', 413.39),
+(2, '2024-03-07 14:41:03', 906.16),
+(2, '2024-03-10 00:58:13', 116.59),
+(2, '2024-03-13 23:38:29', 550.31),
+(2, '2024-03-22 03:07:46', 196.23),
+(2, '2024-03-24 00:23:14', 399.76),
+(2, '2024-03-25 12:28:18', 398.07),
+(2, '2024-03-27 09:11:15', 212.33),
+(2, '2024-04-09 06:33:26', 97.85),
+
+(3, '2024-03-01 17:24:48', 323.11),
+(3, '2024-03-05 10:16:06', 673.23),
+(3, '2024-03-08 14:19:46', 236.74),
+(3, '2024-03-23 15:37:47', 234.87),
+(3, '2024-04-05 20:55:45', 989.35),
+(3, '2024-04-07 05:26:35', 369.20);
+
+SELECT u.email,
+
+ COUNT(*) as total_transactions,
+
+ AVG (t.amount) as avg,
+MIN(t.amount) as in_amount,
+MAX(t.amount) as max_amount,
+SUM(t.amount) as total_amount
+from 
+ userss u join  
+transactions t
+on u.id = t.user_id
+where EXTRACT (YEAR FROM t.dt::date)= '2024'
+and EXTRACT (MONTH from t.dt::date)= '3'
+group by u.email
+order by u.email
  
+
+
+
+
+
+
+
+//26
+
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL
+);
+
+-- Create site_metrics table
+CREATE TABLE site_metrics (
+    customer_id INT REFERENCES customers(id),
+    cpu_usage DECIMAL(5,2),
+    memory_usage DECIMAL(5,2),
+    disk_usage DECIMAL(5,2)
+);
+
+
+
+
+INSERT INTO customers (id, email) VALUES
+(1, 'lrathke0@usa.gov'),
+(2, 'epearsall1@fema.gov'),
+(3, 'sivasechko2@cisco.com');
+
+
+
+INSERT INTO site_metrics (customer_id, cpu_usage, memory_usage, disk_usage) VALUES
+(1, 31.53, 80.84, 1.51),
+(1, 12.54, 26.47, 47.74),
+(1, 12.34, 46.24, 34.43),
+(1, 26.64, 84.98, 17.56),
+(2, 80.45, 50.05, 10.63),
+(2, 40.14, 86.67, 15.98),
+(2, 30.14, 34.38, 17.67),
+(2, 1.11, 83.44, 2.95),
+(3, 30.60, 18.60, 28.02),
+(3, 41.64, 33.64, 5.20),
+(3, 31.88, 7.37, 91.14),
+(3, 43.20, 9.56, 40.40),
+(3, 2.33, 34.29, 18.65),
+(3, 11.50, 32.89, 71.39),
+(3, 39.57, 4.49, 48.05),
+(3, 25.06, 23.77, 33.00),
+(3, 32.81, 1.59, 25.85),
+(3, 48.38, 79.21, 8.31),
+(3, 11.62, 26.75, 71.71),
+(3, 54.43, 6.48, 4.86);
+
+
+
+
+
+SELECT 
+    c.email,
+    ROUND(AVG(s.cpu_usage),2) AS avg_cpu_usage,
+    ROUND(AVG(s.memory_usage),2) AS avg_memory_usage,
+    ROUND(AVG(s.disk_usage) AS avg_disk_usage
+FROM customers c
+JOIN site_metrics s 
+    ON c.id = s.customer_id
+GROUP BY c.email
+HAVING 
+    AVG(s.cpu_usage) > 50 
+    OR AVG(s.memory_usage) > 50
+    OR AVG(s.disk_usage) > 50
+ORDER BY c.email;
+
+
+
+
+
+// 28
+
+
+
+CREATE TABLE accounts (
+    id SERIAL PRIMARY KEY,
+    iban VARCHAR(255) NOT NULL
+);
+
+-- Create income table
+CREATE TABLE income (
+    account_id INT REFERENCES accounts(id),
+    dt VARCHAR(19) NOT NULL,
+    amount DECIMAL(6,2) NOT NULL
+);
+
+
+
+
+INSERT INTO accounts (id, iban) VALUES
+(1, 'SK39 8924 2092 2997 1101 4161'),
+(2, 'PL28 9141 8610 8442 2367 7521 0000'),
+(3, 'CH93 8418 0F7G KQK4 NEHF Q'),
+(4, 'GT41 TBM8 DPFH MTNS BVW5 D4CX VIRR'),
+(5, 'IT27 Y015 0159 036T W7E5 I6ZD EQZ');
+
+
+
+
+
+
+
+INSERT INTO income (account_id, dt, amount) VALUES
+(1, '2024-01-17 16:43:20', 4061.53),
+(1, '2024-02-28 05:30:15', 4488.11),
+(1, '2024-04-07 05:41:27', 4001.91),
+(2, '2023-12-21 07:38:45', 4313.69),
+(2, '2024-01-08 04:48:45', 3640.82),
+(2, '2024-01-20 17:31:20', 3385.15),
+(3, '2024-01-06 23:18:30', 2347.15),
+(3, '2024-03-08 12:53:20', 3814.86),
+(3, '2024-04-01 21:18:16', 2764.27),
+(4, '2024-01-02 23:52:06', 3526.08),
+(4, '2024-02-04 12:32:28', 2221.91),
+(4, '2024-02-11 19:44:53', 4197.07),
+(4, '2024-03-06 06:28:34', 1357.44),
+(4, '2024-03-16 16:13:49', 1854.52),
+(5, '2023-12-31 22:08:57', 2819.54),
+(5, '2024-01-14 18:03:47', 2641.20),
+(5, '2024-01-23 07:50:22', 3692.56),
+(5, '2024-02-28 23:43:28', 1999.09),
+(5, '2024-03-20 10:29:44', 1670.18),
+(5, '2024-03-27 11:12:04', 1193.15);
+
+
+
+
+SELECT 
+    a.iban,
+    ROUND(AVG(i.amount), 2) AS avg_income,
+    SUM(i.amount) AS total_income
+FROM accounts a
+JOIN income i ON a.id = i.account_id
+WHERE 
+    EXTRACT(YEAR FROM i.dt::date) = 2024
+    AND EXTRACT(MONTH FROM i.dt::date) IN (1,2, 3)
+GROUP BY a.iban
+ORDER BY AVG(i.amount)DESC, a.iban
+LIMIT 3;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT 
+    a.iban,
+    TO_CHAR(ROUND(AVG(i.amount), 2), 'FM9999999990.00') AS average_income,
+    TO_CHAR(ROUND(SUM(i.amount), 2), 'FM9999999990.00') AS total_income
+FROM accounts a
+JOIN income i ON a.id = i.account_id
+WHERE 
+    EXTRACT(YEAR FROM i.dt::date) = 2024
+    AND EXTRACT(MONTH FROM i.dt::date) IN (1, 2, 3)
+GROUP BY a.iban
+ORDER BY AVG(i.amount) DESC, a.iban ASC
+LIMIT 3;
+
+
+
+
+// 29
+
+
+CREATE TABLE accountss (
+    id SERIAL PRIMARY KEY,
+    iban VARCHAR(255) NOT NULL
+);
+
+-- Create income table
+CREATE TABLE incomess (
+    account_id INT REFERENCES accounts(id),
+    dt VARCHAR(19),
+    amount DECIMAL(6,2)
+);
+
+
+
+INSERT INTO accountss (id, iban) VALUES
+(1, 'FR55 4477 6154 73ND TN3F HMOU T36'),
+(2, 'DK46 1272 1831 2573 01'),
+(3, 'RS53 5237 5794 6016 5411 43');
+
+
+
+
+
+
+-- Insert data into income table
+INSERT INTO incomess (account_id, dt, amount) VALUES
+(1, '2022-12-31 10:03:42', 2779.19),
+(1, '2023-02-04 08:50:14', 1777.68),
+(1, '2023-02-13 04:22:07', 1954.81),
+(1, '2023-03-04 14:46:04', 1547.79),
+(1, '2023-05-23 15:42:13', 1208.49),
+(1, '2023-05-24 23:24:07', 1521.72),
+(1, '2023-07-28 11:01:46', 1792.75),
+(1, '2023-12-07 14:19:09', 2374.25),
+(1, '2024-01-27 05:55:36', 2803.39),
+(2, '2022-12-03 18:04:34', 1826.65),
+(2, '2023-02-17 00:59:57', 3074.11),
+(2, '2023-03-01 08:17:15', 1007.30),
+(2, '2023-08-19 09:16:41', 4515.04),
+(2, '2024-01-08 09:14:22', 3321.78),
+(2, '2024-01-10 15:16:28', 2033.87),
+(3, '2023-05-09 07:28:27', 3158.66),
+(3, '2023-05-22 04:39:34', 3851.20),
+(3, '2023-07-21 19:51:14', 4152.29),
+(3, '2023-10-05 19:51:14', 4722.20),
+(3, '2023-11-11 2:42:59', 1592.16);
+
+
+
+
+
+SELECT 
+    a.iban,
+    ROUND(SUM(i.amount), 2) AS total_income,
+    '20%' AS tax_rate,
+    ROUND(SUM(i.amount) * 0.20, 2) AS calculated_tax
+FROM accountss a
+JOIN incomess i 
+    ON a.id = i.account_id
+WHERE EXTRACT(YEAR FROM i.dt::date) = 2023
+GROUP BY a.iban
+ORDER BY a.iban;
+
+
+
 
 
