@@ -1,0 +1,212 @@
+//37
+
+SELECT * FROM bonds
+
+
+SELECT * FROM maturities
+
+
+SELECT 
+    b.name,
+    COUNT(m.maturity) AS maturity_dates,
+    MIN(m.maturity) AS earliest_maturity,
+    MAX(m.maturity) AS latest_maturity,
+    CEIL(AVG(m.maturity - make_date(2023, 9, 13)))::INT AS avg_days_to_maturity
+FROM 
+    bonds b
+JOIN 
+    maturities m ON b.id = m.bond_id
+GROUP BY 
+    b.name
+HAVING 
+    CEIL(AVG(m.maturity - make_date(2023, 9, 13))) > 365
+ORDER BY 
+    b.name ASC;
+
+
+
+
+
+//38
+
+
+-- Drop if already exists (for clean run)
+DROP TABLE IF EXISTS interest_rates;
+DROP TABLE IF EXISTS interest_rates ;
+
+-- Bonds table
+CREATE TABLE bonds (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Interest rates table
+CREATE TABLE interest_rates (
+    bond_id INT REFERENCES bonds(id),
+    rate DECIMAL(2,1) NOT NULL
+);
+
+
+
+
+
+
+-- Bonds data
+INSERT INTO bonds (id, name) VALUES
+(1, 'Alpha Mortgage Bond'),
+(2, 'Beta Mortgage Bond'),
+(3, 'Gamma Mortgage Bond');
+
+-- Interest rates data
+INSERT INTO interest_rates (bond_id, rate) VALUES
+(1, 1.4),
+(1, 1.8),
+(1, 2.0),
+(1, 2.4),
+(1, 3.4),
+(1, 4.6),
+(1, 4.7),
+(1, 4.9),
+(2, 2.0),
+(2, 2.1),
+(2, 3.0),
+(2, 3.2),
+(2, 4.0),
+(3, 1.2),
+(3, 1.3),
+(3, 1.4),
+(3, 2.1),
+(3, 2.5),
+(3, 3.5),
+(3, 4.0);
+
+
+
+
+
+
+SELECT 
+b.name,
+COUNT(*),
+MIN(rate),
+MAX(rate),
+ROUND(AVG(rate),2)
+
+FROM 
+bonds b 
+join 
+interest_rates i 
+on b.id = i.bond_id
+group by b.name
+having AVG(rate)> 3
+order by b.name
+
+
+
+
+
+
+// 39
+DROP TABLE IF EXISTS bondholders_bonds;
+DROP TABLE IF EXISTS bonds;
+DROP TABLE IF EXISTS bondholders;
+
+-- Bondholders
+CREATE TABLE bondholders (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Bonds
+CREATE TABLE bonds (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    annual_coupon DECIMAL(5,2) NOT NULL,
+    coupons_remaining INT NOT NULL
+);
+
+-- Bondholders_Bonds (many-to-many relationship)
+CREATE TABLE bondholders_bonds (
+    bondholder_id INT REFERENCES bondholders(id),
+    bond_id INT REFERENCES bonds(id)
+);
+
+
+
+
+-- Bondholders
+INSERT INTO bondholders (id, name) VALUES
+(1, 'Alex Smith'),
+(2, 'Taylor Johnson'),
+(3, 'Jordan Davis');
+
+-- Bonds
+INSERT INTO bonds (id, name, annual_coupon, coupons_remaining) VALUES
+(1, 'Golden Bonds', 150.00, 4),
+(2, 'Silver Lining', 200.00, 2),
+(3, 'Diamond Trust', 100.00, 4),
+(4, 'Emerald Wealth', 350.00, 5),
+(5, 'Ruby Returns', 150.00, 8),
+(6, 'Sapphire Security', 450.00, 5),
+(7, 'Amber Assurance', 100.00, 8),
+(8, 'Topaz Treasury', 100.00, 2),
+(9, 'Opal Opportunities', 150.00, 5),
+(10, 'Pearl Prosperity', 450.00, 5),
+(11, 'Platinum Promise', 450.00, 9),
+(12, 'Jade Investments', 350.00, 1),
+(13, 'Garnet Growth', 150.00, 4),
+(14, 'Onyx Returns', 350.00, 2),
+(15, 'Quartz Capital', 100.00, 2),
+(16, 'Citrine Securities', 250.00, 2),
+(17, 'Aquamarine Assets', 250.00, 2),
+(18, 'Peridot Portfolio', 300.00, 8),
+(19, 'Tourmaline Trust', 100.00, 6),
+(20, 'Moonstone Money', 150.00, 9);
+
+-- Bondholders_Bonds (ownership mapping)
+INSERT INTO bondholders_bonds (bondholder_id, bond_id) VALUES
+-- Alex Smith
+(1, 1),
+(1, 2),
+(1, 6),
+(1, 8),
+(1, 9),
+(1, 13),
+(1, 14),
+(1, 16),
+(1, 17),
+-- Taylor Johnson
+(2, 4),
+(2, 5),
+(2, 7),
+(2, 11),
+(2, 15),
+(2, 18),
+-- Jordan Davis
+(3, 3),
+(3, 10),
+(3, 12),
+(3, 19),
+(3, 20);
+
+
+
+SELECT 
+bo.name,
+ROUND(SUM(b.annual_coupon * b.coupons_remaining),2 )
+from 
+bondholders bo
+join 
+bondholders_bonds bb
+on bo.id = bb.bondholder_id
+JOIN bonds b on b.id = bb.bond_id
+
+group by bo.name
+having SUM(b.annual_coupon * b.coupons_remaining) > 100000
+
+
+
+
+
+
+
