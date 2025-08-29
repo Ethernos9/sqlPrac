@@ -1232,3 +1232,44 @@ having count(*)>1
 
 
 
+//95
+
+
+CREATE TABLE STUDENTS (
+    STUDENT_ID INT PRIMARY KEY,
+    STUDENT_NAME VARCHAR(100),
+    STUDENT_AGE INT
+);
+
+
+
+CREATE TABLE MAJORS (
+    MAJOR_ID INT PRIMARY KEY,
+    MAJOR_NAME VARCHAR(100)
+);
+
+
+
+CREATE TABLE REGISTER (
+    STUDENT_ID INT,
+    MAJOR_ID INT,
+    FOREIGN KEY (STUDENT_ID) REFERENCES STUDENTS(STUDENT_ID),
+    FOREIGN KEY (MAJOR_ID) REFERENCES MAJORS(MAJOR_ID)
+);
+
+
+
+
+
+SELECT s.student_name , m.major_name
+FROM students s join register r on 
+s.student_id = r.student_id
+join majors m on m.major_id = r.major_id
+order by s.student_id
+limit 20
+
+
+
+
+
+
