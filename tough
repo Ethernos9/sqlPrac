@@ -1,3 +1,5 @@
+//30
+
 -- Create customers table
 CREATE TABLE customers (
     id INT PRIMARY KEY,
