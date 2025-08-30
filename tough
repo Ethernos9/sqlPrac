@@ -1,0 +1,711 @@
+-- Create customers table
+CREATE TABLE customers (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Create expenses table
+CREATE TABLE expenses (
+    customer_id INT,
+    dt VARCHAR(19) NOT NULL,
+    amount DECIMAL(6,2) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+
+-- Create income table
+CREATE TABLE income (
+    customer_id INT,
+    dt VARCHAR(19) NOT NULL,
+    amount DECIMAL(6,2) NOT NULL,
+    FOREIGN KEY (customer_id) REFERENCES customers(id)
+);
+-- Insert customers
+INSERT INTO customers (id, email) VALUES
+(1, 'otoohey0@elpais.com'),
+(2, 'egrebbin1@state.gov'),
+(3, 'arides2@sohu.com');
+
+-- Insert expenses
+INSERT INTO expenses (customer_id, dt, amount) VALUES
+(1, '2024-02-21 22:12:12', 90.41),
+(1, '2024-02-27 06:48:37', 792.88),
+(1, '2024-03-10 05:19:43', 442.01),
+(1, '2024-03-11 19:48:25', 327.35),
+(1, '2024-03-24 22:03:06', 639.62),
+(1, '2024-03-29 00:37:46', 150.12),
+(1, '2024-04-02 03:36:50', 257.67),
+(2, '2024-02-21 06:11:26', 400.22),
+(2, '2024-03-11 15:34:19', 298.41),
+(2, '2024-03-25 04:36:27', 376.87),
+(2, '2024-03-29 19:05:51', 530.07),
+(2, '2024-03-30 07:07:28', 287.84),
+(2, '2024-04-02 15:44:22', 868.03),
+(3, '2024-03-01 16:02:47', 33.30),
+(3, '2024-03-06 11:53:42', 838.51),
+(3, '2024-03-20 23:34:48', 968.08),
+(3, '2024-03-21 21:18:08', 35.36),
+(3, '2024-03-30 06:51:13', 956.12),
+(3, '2024-03-31 10:11:56', 896.32),
+(3, '2024-03-31 22:36:57', 740.94);
+
+-- Insert income
+INSERT INTO income (customer_id, dt, amount) VALUES
+(1, '2024-02-20 21:00:55', 366.66),
+(1, '2024-03-11 03:25:04', 769.38),
+(1, '2024-03-15 00:49:53', 84.10),
+(1, '2024-03-21 18:32:51', 839.48),
+(1, '2024-03-29 15:34:13', 333.97),
+(1, '2024-04-01 00:34:24', 253.13),
+(1, '2024-04-02 11:13:49', 263.56),
+(2, '2024-02-20 15:03:26', 822.75),
+(2, '2024-02-26 14:57:39', 277.23),
+(2, '2024-03-19 09:24:47', 24.08),
+(2, '2024-03-20 15:54:24', 988.34),
+(2, '2024-04-02 08:28:38', 990.54),
+(3, '2024-02-21 10:23:33', 430.82),
+(3, '2024-02-29 08:25:32', 482.85),
+(3, '2024-03-01 05:10:42', 962.60),
+(3, '2024-03-04 08:27:34', 30.21),
+(3, '2024-03-19 12:12:01', 80.00),
+(3, '2024-03-21 00:32:10', 674.76),
+(3, '2024-03-23 14:14:32', 863.79),
+(3, '2024-04-09 13:37:07', 51.42);
+
+
+
+
+SELECT 
+    c.email,
+    COALESCE(SUM(i.amount),0) AS total_income,
+   COALESCE( SUM(e.amount),0) AS total_expenses
+FROM customers c
+LEFT JOIN income i 
+    ON c.id = i.customer_id 
+    AND EXTRACT(YEAR FROM i.dt::date) = 2024 
+    AND EXTRACT(MONTH FROM i.dt::date) = 3
+LEFT JOIN expenses e 
+    ON c.id = e.customer_id 
+    AND EXTRACT(YEAR FROM e.dt::date) = 2024 
+    AND EXTRACT(MONTH FROM e.dt::date) = 3
+GROUP BY c.email;
+
+
+
+SELECT * FROM income
+
+
+
+
+SELECT
+c.email
+
+
+from customers c
+join (
+SELECT customer_id ,SUM(amount) as total_amount
+from income
+where extract(year from dt::date)= 2024
+and extract (year from dt::date) = 3
+group by customer_id
+
+
+) i on c.id = i.customer_id
+group by c.email
+
+
+
+
+SELECT
+    c.email,
+	e.total_expenses,
+    i.total_amount
+	
+FROM customers c
+JOIN (
+    SELECT customer_id, SUM(amount) AS total_amount
+    FROM income
+    WHERE EXTRACT(YEAR FROM dt::date) = 2024
+      AND EXTRACT(MONTH FROM dt::date) = 3
+    GROUP BY customer_id
+) 
+i ON c.id = i.customer_id
+
+
+JOIN (
+SELECT customer_id , SUM(amount) as total_expenses
+from expenses 
+ WHERE EXTRACT(YEAR FROM dt::date) = 2024
+      AND EXTRACT(MONTH FROM dt::date) = 3
+	  group by customer_id
+) e on c.id = e.customer_id
+
+
+
+
+GROUP BY c.email, i.total_amount, e.total_expenses
+
+order by c.email
+
+
+
+
+
+
+
+
+
+SELECT 
+    c.email,
+    SUM(i.amount) FILTER (
+        WHERE EXTRACT(YEAR FROM i.dt::date) = 2024
+          AND EXTRACT(MONTH FROM i.dt::date) = 3
+    ) AS total_income,
+    SUM(e.amount) FILTER (
+        WHERE EXTRACT(YEAR FROM e.dt::date) = 2024
+          AND EXTRACT(MONTH FROM e.dt::date) = 3
+    ) AS total_expenses
+FROM customers c
+LEFT JOIN income i 
+    ON c.id = i.customer_id
+LEFT JOIN expenses e 
+    ON c.id = e.customer_id
+GROUP BY c.email
+ORDER BY c.email;
+
+
+
+
+
+
+
+
+// 39
+
+
+
+
+
+
+DROP TABLE IF EXISTS bondholders_bonds;
+DROP TABLE IF EXISTS bonds;
+DROP TABLE IF EXISTS bondholders;
+
+-- Bondholders
+CREATE TABLE bondholders (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL
+);
+
+-- Bonds
+CREATE TABLE bonds (
+    id INT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    annual_coupon DECIMAL(5,2) NOT NULL,
+    coupons_remaining INT NOT NULL
+);
+
+-- Bondholders_Bonds (many-to-many relationship)
+CREATE TABLE bondholders_bonds (
+    bondholder_id INT REFERENCES bondholders(id),
+    bond_id INT REFERENCES bonds(id)
+);
+
+
+
+
+-- Bondholders
+INSERT INTO bondholders (id, name) VALUES
+(1, 'Alex Smith'),
+(2, 'Taylor Johnson'),
+(3, 'Jordan Davis');
+
+-- Bonds
+INSERT INTO bonds (id, name, annual_coupon, coupons_remaining) VALUES
+(1, 'Golden Bonds', 150.00, 4),
+(2, 'Silver Lining', 200.00, 2),
+(3, 'Diamond Trust', 100.00, 4),
+(4, 'Emerald Wealth', 350.00, 5),
+(5, 'Ruby Returns', 150.00, 8),
+(6, 'Sapphire Security', 450.00, 5),
+(7, 'Amber Assurance', 100.00, 8),
+(8, 'Topaz Treasury', 100.00, 2),
+(9, 'Opal Opportunities', 150.00, 5),
+(10, 'Pearl Prosperity', 450.00, 5),
+(11, 'Platinum Promise', 450.00, 9),
+(12, 'Jade Investments', 350.00, 1),
+(13, 'Garnet Growth', 150.00, 4),
+(14, 'Onyx Returns', 350.00, 2),
+(15, 'Quartz Capital', 100.00, 2),
+(16, 'Citrine Securities', 250.00, 2),
+(17, 'Aquamarine Assets', 250.00, 2),
+(18, 'Peridot Portfolio', 300.00, 8),
+(19, 'Tourmaline Trust', 100.00, 6),
+(20, 'Moonstone Money', 150.00, 9);
+
+-- Bondholders_Bonds (ownership mapping)
+INSERT INTO bondholders_bonds (bondholder_id, bond_id) VALUES
+-- Alex Smith
+(1, 1),
+(1, 2),
+(1, 6),
+(1, 8),
+(1, 9),
+(1, 13),
+(1, 14),
+(1, 16),
+(1, 17),
+-- Taylor Johnson
+(2, 4),
+(2, 5),
+(2, 7),
+(2, 11),
+(2, 15),
+(2, 18),
+-- Jordan Davis
+(3, 3),
+(3, 10),
+(3, 12),
+(3, 19),
+(3, 20);
+
+
+
+SELECT bo.name,
+ROUND(SUM(b.annual_coupon * b.coupons_remaining ),2)
+
+FROM 
+bondholders bo 
+join bondholders_bonds bb
+on bo.id = bb.bondholder_id
+join  bonds b
+on b.id = bb.bond_id
+group by bo.name
+having SUM(b.annual_coupon * b.coupons_remaining ) > 10000
+
+
+
+
+// 40
+
+
+
+
+-- Create investors table
+CREATE TABLE investors (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE
+);
+
+-- Create cash_flows table
+CREATE TABLE cash_flows (
+    investor_id INT,
+    cash_flow DECIMAL(12,2),
+    FOREIGN KEY (investor_id) REFERENCES investors(id)
+);
+
+-- Insert data into investors
+INSERT INTO investors (id, email) VALUES
+(1, 'ematson0@ebay.co.uk'),
+(2, 'lsalvadore1@msn.com'),
+(3, 'aclowser2@patch.com');
+
+-- Insert data into cash_flows
+INSERT INTO cash_flows (investor_id, cash_flow) VALUES
+(1, 184040.12),
+(1, 179280.08),
+(1, 179374.42),
+(1, 79302.21),
+(1, 87466.20),
+(1, 194588.36),
+(1, 153563.92),
+(1, 56377.92),
+(2, 59039.14),
+(2, 167247.23),
+(2, 59311.03),
+(2, 183883.00),
+(2, 118851.21),
+(3, 58868.62),
+(3, 96909.26),
+(3, 103735.73),
+(3, 171261.97),
+(3, 86463.11),
+(3, 56931.73),
+(3, 194699.58);
+
+
+
+
+
+
+
+SELECT 
+i.email,
+COUNT(c.investor_id) as investments,
+min(c.cash_flow) as min_flow,
+max(c.cash_flow) as max_flow,
+ROUND(avg(c.cash_flow),2) as avg_flow
+from investors i 
+join 
+cash_flows c 
+on
+i.id = c.investor_id
+group by i.email
+having SUM(c.cash_flow) > 1000000
+order by i.email
+
+
+
+
+// 41
+
+DROP TABLE if exists investors
+DROP TABLE if exists cash_flows
+
+-- Create investors table
+CREATE TABLE investors (
+    id INT PRIMARY KEY,
+    email VARCHAR(255) UNIQUE
+);
+
+-- Create cash_flows table
+CREATE TABLE cash_flows (
+    investor_id INT,
+    expected_flow DECIMAL(12,2),
+    FOREIGN KEY (investor_id) REFERENCES investors(id)
+);
+
+-- Insert data into investors
+INSERT INTO investors (id, email) VALUES
+(1, 'tdowner0@timesonline.co.uk'),
+(2, 'cgarza1@opera.com'),
+(3, 'nbarwise2@si.edu');
+
+-- Insert data into cash_flows
+INSERT INTO cash_flows (investor_id, expected_flow) VALUES
+(1, 24923.83),
+(1, 30212.10),
+(1, 87126.50),
+(1, 56018.65),
+(1, 93357.47),
+(1, 55073.54),
+(1, 27095.07),
+(2, 44165.12),
+(2, 43658.84),
+(2, 35835.34),
+(2, 12660.46),
+(2, 58676.60),
+(2, 95929.25),
+(2, 47161.23),
+(2, 80283.91),
+(2, 54427.20),
+(2, 93223.98),
+(3, 19741.35),
+(3, 12243.25),
+(3, 50470.06);
+
+
+
+
+SELECT 
+i.email,
+COUNT(*) as investment_count,
+SUM(c.expected_flow) as total_expected_flow,
+(MAX(c.expected_flow)  - min(c.expected_flow)) as range_expected
+
+FROM
+investors i
+join cash_flows c
+
+on i.id = c.investor_id
+group by i.email
+having SUM(c.expected_flow) > 100000
+order by i.email
+
+
+
+
+// 42
+
+
+-- Create coupons table
+CREATE TABLE coupons (
+    id INT PRIMARY KEY,
+    coupon_code VARCHAR(255) UNIQUE,
+    description VARCHAR(255),
+    is_enabled SMALLINT
+);
+
+-- Create coupon_uses table
+CREATE TABLE coupon_uses (
+    coupon_id INT,
+    amount DECIMAL(6,2), -- widened size to handle >99.99 safely
+    FOREIGN KEY (coupon_id) REFERENCES coupons(id)
+);
+
+-- Insert data into coupons
+INSERT INTO coupons (id, coupon_code, description, is_enabled) VALUES
+(1, 'COUPON123', 'nisi nam ultrices libero non', 0),
+(2, 'SAVE20', 'ac est lacinia', 1),
+(3, 'DISCOUNT50', 'quis odio consequat', 1);
+
+-- Insert data into coupon_uses
+INSERT INTO coupon_uses (coupon_id, amount) VALUES
+(1, 36.68),
+(1, 3.56),
+(1, 2.10),
+(1, 39.58),
+(2, 39.81),
+(2, 24.07),
+(2, 28.42),
+(2, 31.03),
+(2, 3.24),
+(2, 36.33),
+(3, 8.89),
+(3, 30.44),
+(3, 36.94),
+(3, 42.65),
+(3, 33.61),
+(3, 41.92),
+(3, 1.78),
+(3, 20.26),
+(3, 27.92),
+(3, 0.23);
+
+
+
+
+
+
+SELECT
+c.coupon_code,
+c.description,
+COUNT(*) as total_uses,
+min(cc.amount),
+max(cc.amount),
+
+ROUND(avg(cc.amount),2)
+
+
+ from   coupons c
+ join coupon_uses cc
+ on c.id = cc.coupon_id
+
+ where c.is_enabled =1
+group by c.coupon_code,
+c.description
+order by c.coupon_code
+ 
+
+
+
+
+
+//43 
+DROP TABLE if exists professions
+DROP TABLE if exists  freelancers
+DROP TABLE if exists  projects
+
+-- Drop tables if they already exist (to recreate cleanly)
+DROP TABLE IF EXISTS projects CASCADE;
+DROP TABLE IF EXISTS freelancers CASCADE;
+DROP TABLE IF EXISTS professions CASCADE;
+
+-- Table: professions
+CREATE TABLE professions (
+    id INT PRIMARY KEY,
+    title VARCHAR(255) UNIQUE NOT NULL
+);
+
+-- Table: freelancers
+CREATE TABLE freelancers (
+    id INT PRIMARY KEY,
+    profession_id INT NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    CONSTRAINT fk_profession
+        FOREIGN KEY (profession_id) 
+        REFERENCES professions (id)
+        ON DELETE CASCADE
+);
+
+-- Table: projects
+CREATE TABLE projects (
+    id INT PRIMARY KEY,
+    freelancer_id INT NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('Completed','Ongoing','Cancelled')),
+    income DECIMAL(10,2) CHECK (income >= 0),
+    CONSTRAINT fk_freelancer
+        FOREIGN KEY (freelancer_id) 
+        REFERENCES freelancers (id)
+        ON DELETE CASCADE
+);
+
+
+
+-- Insert data into professions
+INSERT INTO professions (id, title) VALUES
+(1, 'Articial Intelligence Engineer'),
+(2, 'Network Administrator'),
+(3, 'Game Developer');
+
+-- Insert data into freelancers
+INSERT INTO freelancers (id, profession_id, email) VALUES
+(1, 1, 'lfernez0@microsoft.com'),
+(3, 2, 'mbrydone2@delicious.com'),
+(4, 2, 'jhamp3@4shared.com'),
+(5, 3, 'cparfett4@twitter.com');
+
+-- Insert data into projects
+INSERT INTO projects (id, freelancer_id, status, income) VALUES
+(5, 1, 'Completed', 8562.13),
+(11, 1, 'Completed', 6727.56),
+(10, 3, 'Completed', 3753.46),
+(20, 3, 'Completed', 6659.39),
+(6, 4, 'Completed', 8459.28),
+(13, 4, 'Completed', 5899.31),
+(16, 4, 'Completed', 2709.63),
+(4, 5, 'Completed', 5029.44),
+(7, 5, 'Completed', 1763.94),
+(9, 5, 'Completed', 6988.36),
+(8, 3, 'Cancelled', 8699.67),
+(1, 5, 'Cancelled', 5403.21),
+(19, 3, 'Ongoing', 72.51),
+(3, 4, 'Ongoing', 8561.14),
+(15, 4, 'Ongoing', 9235.78),
+(17, 4, 'Ongoing', 4307.76);
+
+
+
+
+
+
+
+SELECT  
+po.title,
+COUNT(p.id) as total_projects,
+SUM(p.income),
+COUNT(f.id)
+FROM 
+professions po
+join freelancers f 
+on
+po.id = 
+f.profession_id
+join projects p on
+p.freelancer_id= f.id
+
+group by po.title,p.status
+having p.status='completed'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT 
+po.title,
+COUNT(p.id) as total_projects,
+SUM(p.income) as total_income,
+COUNT(f.id) as total_freelancers , 
+avg(p.income) as avg_income
+
+FROM 
+professions po 
+join freelancers f 
+on po.id = f.profession_id
+join projects p on p.id = 
+f.profession_id
+group by po.title
+-- having p.status= 'completed'
+order by total_income
+
+SELECT  
+    po.title,
+    COUNT(p.id) AS total_projects,
+    SUM(p.income) AS total_income,
+    COUNT(DISTINCT f.id) AS total_freelancers
+FROM professions po
+JOIN freelancers f ON po.id = f.profession_id
+JOIN projects p ON p.freelancer_id = f.id
+WHERE p.status = 'Completed'
+GROUP BY po.title;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT  
+    po.title,
+    COUNT(p.id) AS total_projects,
+    SUM(p.income) AS total_income,
+    COUNT(DISTINCT f.id) AS total_freelancers
+FROM professions po
+JOIN freelancers f ON po.id = f.profession_id
+JOIN projects p ON p.freelancer_id = f.id
+WHERE p.status = 'Completed'
+GROUP BY po.title
+order by 
