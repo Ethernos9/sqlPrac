@@ -191,18 +191,20 @@ INSERT INTO bondholders_bonds (bondholder_id, bond_id) VALUES
 
 
 
-SELECT 
-bo.name,
-ROUND(SUM(b.annual_coupon * b.coupons_remaining),2 )
-from 
-bondholders bo
-join 
-bondholders_bonds bb
-on bo.id = bb.bondholder_id
-JOIN bonds b on b.id = bb.bond_id
+SELECT bo.name,
+ROUND(SUM(b.annual_coupon * b.coupons_remaining ),2)
 
+FROM 
+bondholders bo 
+join bondholders_bonds bb
+on bo.id = bb.bondholder_id
+join  bonds b
+on b.id = bb.bond_id
 group by bo.name
-having SUM(b.annual_coupon * b.coupons_remaining) > 100000
+having SUM(b.annual_coupon * b.coupons_remaining ) > 10000
+
+
+
 
 
 
