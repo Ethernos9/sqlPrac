@@ -1952,3 +1952,78 @@ group by full_name , a.iban
 
 
 
+// 55
+
+CREATE TABLE proles (
+    id INT PRIMARY KEY,
+    rst_name VARCHAR(255),
+    last_name VARCHAR(255),
+    email VARCHAR(255)
+);
+
+-- Create table: relations
+CREATE TABLE relations (
+    prole_id INT,
+    related_to VARCHAR(255),
+    is_approved BOOLEAN,
+    FOREIGN KEY (prole_id) REFERENCES proles(id)
+);
+
+-- Insert data into proles
+INSERT INTO proles (id, rst_name, last_name, email) VALUES
+(1, 'Shayne', 'Shilito', 'sshilito0@ftc.gov'),
+(2, 'Shell', 'Shade', 'sshade1@paginegialle.it'),
+(3, 'Nobie', 'Splain', 'nsplain2@npr.org');
+
+-- Insert data into relations
+INSERT INTO relations (prole_id, related_to, is_approved) VALUES
+(1, 'cbasinigazzii', TRUE),
+(1, 'ldevered', TRUE),
+(1, 'edeniskeb', TRUE),
+(1, 'cstirland4', TRUE),
+(1, 'ngooddiea', TRUE),
+(1, 'alockney7', TRUE),
+(1, 'jsorrillj', FALSE),
+(1, 'bnodin3', FALSE),
+(1, 'dwall2', FALSE),
+(1, 'folivas1', FALSE),
+(2, 'ksharland6', FALSE),
+(2, 'pbarosch8', FALSE),
+(2, 'smacieja9', FALSE),
+(2, 'bbrasonf', FALSE),
+(2, 'dabrahartg', FALSE),
+(3, 'gaymer5', TRUE),
+(3, 'rwoolcockse', TRUE),
+(3, 'egilyott0', TRUE),
+(3, 'agillionc', FALSE),
+(3, 'fgribbinh', FALSE);
+
+
+
+
+
+
+SELECT 
+p.last_name || ' ' || p.rst_name   as full_name,
+p.email as email,
+COUNT(*) as total_relations,
+COUNT(*) FILTER(where r.is_approved = TRUE) as approved ,
+COUNT(*) FILTER (where r.is_approved = FALSE) as rejected
+FROM 
+
+proles p 
+join relations r
+ on p.id = r.prole_id
+
+
+ group by full_name,  p.email
+ order by full_name
+
+
+
+
+
+
+
+
+
