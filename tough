@@ -1928,13 +1928,14 @@ INSERT INTO declarations (account_id, quarter, income) VALUES
 
 SELECT * FROM declarations
 
-
-
-
 SELECT 
-CONCAT(a.last_name , ' ', a.first_name),
+CONCAT(a.last_name , ' ', a.first_name) as full_name , 
 a.iban,
-d.income * 0.1)
+(SUM(d.income )) as total_taxable_income,
+'10%' as rate,
+
+SUM(d.income * 0.1)
+
 
 
 
@@ -1942,6 +1943,9 @@ FROM
 accountp a
 join declarations d
 on a.id = d.account_id
+WHERE d.quarter IN ('Q1', 'Q2','Q3','Q4')
+group by full_name , a.iban
+
 
 
 
