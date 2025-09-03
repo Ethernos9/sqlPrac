@@ -1282,6 +1282,10 @@ GROUP BY c.customer_name
 ORDER BY c.customer_name;
 
 
+
+
+/// 72
+
 -- Create credit_holders table
 CREATE TABLE credit_holders (
     id INT PRIMARY KEY,
