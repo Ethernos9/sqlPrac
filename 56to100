@@ -1487,7 +1487,43 @@ WHERE e.status = 'failure'
 GROUP BY c.id, c.rst_name, c.last_name
 HAVING COUNT(*) > 3;
 
+// 80
+CREATE TABLE eventsa (
+    dt VARCHAR(19),
+    customer VARCHAR(64),
+    amount DECIMAL(5,2)
+);
 
+INSERT INTO eventsa (dt, customer, amount) VALUES
+('2021-11-22 06:41:01', 'Donaugh Furneaux', 0.89),
+('2021-12-22 20:07:04', 'Donaugh Furneaux', 10.51),
+('2021-12-31 05:22:11', 'Donaugh Furneaux', 55.92),
+('2021-12-12 21:26:42', 'Harley Lyddiard', 37.68),
+('2021-11-22 21:24:30', 'Kippy Jelly', 85.87),
+('2021-11-25 07:00:29', 'Kippy Jelly', 7.25),
+('2021-12-16 16:48:32', 'Kippy Jelly', 65.49),
+('2021-11-22 23:30:55', 'Latrina Jackman', 93.49),
+('2021-11-24 19:38:52', 'Latrina Jackman', 82.28),
+('2021-11-30 22:59:33', 'Latrina Jackman', 96.87),
+('2021-12-30 13:05:34', 'Latrina Jackman', 88.19),
+('2021-11-22 02:08:02', 'Maribel Braim', 20.19),
+('2021-12-13 00:14:58', 'Maribel Braim', 97.99),
+('2021-12-26 13:22:20', 'Maribel Braim', 57.06),
+('2021-12-29 00:20:27', 'Maribel Braim', 24.35),
+('2021-11-25 14:29:29', 'Orrin Curley', 6.69),
+('2021-12-08 06:22:16', 'Orrin Curley', 36.85),
+('2021-12-09 15:32:16', 'Orrin Curley', 11.04),
+('2021-11-28 00:15:20', 'Rasla Venny', 14.59),
+('2021-12-25 09:58:23', 'Rasla Venny', 6.41);
+
+
+SELECT customer,
+		COUNT(*) as 	transactions,
+		ROUND(SUM(amount), 2)
+FROM eventsa
+WHERE EXTRACT(month from dt::timestamp) = 12
+GROUP BY customer
+HAVING COUNT(*) >= 3
 
 
 
