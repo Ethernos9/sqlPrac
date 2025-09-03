@@ -1343,6 +1343,103 @@ GROUP BY c.id
 
 
 
+
+
+// 73   
+
+
+CREATE TABLE ACCOUNTS (
+    id INT PRIMARY KEY,
+    account_holder VARCHAR(30),
+    amount VARCHAR(10)
+);
+
+
+INSERT INTO ACCOUNTS (id, account_holder, amount) VALUES
+(1, 'Ellis Beane', '$5582.03'),
+(2, 'Drew Nolf', '$2470.3'),
+(3, 'Jordan Chatmon', '$6211.52'),
+(4, 'Robin Hansard', '$8133.31'),
+(5, 'Spencer Days', '$5273.81'),
+(6, 'Morgan Criss', '$3741.85'),
+(7, 'Wesley Waugh', '$7056.14'),
+(8, 'Alex Canty', '$2590.45'),
+(9, 'Blake Hawbaker', '$3987.27'),
+(10, 'Taylor Blackston', '$8351.98');
+
+
+
+
+
+
+SELECT
+account_holder,
+((RIGHT(amount , LENGTH(amount)-1))::NUMERIC )* 0.05  as total_sum
+from accounts 
+order by total_sum desc
+
+
+
+
+SELECT
+account_holder,
+('$' || (substring(amount, 2)::NUMERIC )* 0.05)  as total_sum
+from accounts 
+order by  total_sum  DESC , account_holder
+
+
+
+-- order by total_sum desc
+
+
+SELECT 
+    account_holder,
+    '$' || ROUND(CAST(SUBSTRING(amount, 2) AS NUMERIC) * 0.05, 2) AS interest
+FROM accounts
+ORDER BY account_holder ASC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 CREATE TABLE transactionss (
     transaction_id VARCHAR(10) PRIMARY KEY,
     amount DECIMAL(18,2)
