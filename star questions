@@ -117,3 +117,69 @@ ORDER BY EXTRACT(MONTH FROM s.dt::date), total_sales DESC;
 
 
 
+// 75
+
+
+
+
+
+-- Create table
+CREATE TABLE RESULT (
+    id INT PRIMARY KEY,
+    first_name VARCHAR(20),
+    last_name VARCHAR(20),
+    cgpa_first_year FLOAT,
+    cgpa_second_year FLOAT,
+    cgpa_third_year FLOAT,
+    cgpa_fourth_year FLOAT
+);
+
+-- Insert data
+INSERT INTO RESULT (id, first_name, last_name, cgpa_first_year, cgpa_second_year, cgpa_third_year, cgpa_fourth_year)
+VALUES
+(1, 'Pearlene', 'Beane', 7.0, 5.1, 8.4, 8.9),
+(2, 'Franklin', 'Nolf', 7.7, 7.2, 5.2, 8.3),
+(3, 'Bell', 'Chatmon', 7.3, 8.4, 8.9, 10.0),
+(4, 'Belva', 'Hansard', 6.2, 9.2, 5.8, 6.7),
+(5, 'Missy', 'Days', 8.3, 10.0, 7.3, 6.7),
+(6, 'Vicenta', 'Criss', 5.4, 9.5, 6.1, 9.0),
+(7, 'Annelle', 'Waugh', 6.5, 7.9, 9.6, 9.3),
+(8, 'Darby', 'Canty', 5.5, 9.0, 8.6, 5.9),
+(9, 'Ka', 'Hawbaker', 5.7, 6.4, 5.2, 6.8),
+(10, 'Alease', 'Blackston', 5.3, 7.5, 9.3, 6.0);
+
+
+
+
+SELECT 
+first_name || ' ' ||  last_name as full_name,
+
+Round((cgpa_first_year + cgpa_second_year + cgpa_third_year + cgpa_fourth_year)/4.0),1) as result
+
+
+FROM 
+
+
+result 
+
+group by  result , full_name
+
+
+
+
+
+SELECT 
+    first_name || ' ' || last_name AS full_name,
+    ROUND(
+        ((cgpa_first_year + cgpa_second_year + cgpa_third_year + cgpa_fourth_year) / 4.0)::numeric,
+        1
+    ) AS average_gpa
+FROM RESULTS
+ORDER BY average_gpa DESC, full_name;
+
+
+
+
+
+
+
