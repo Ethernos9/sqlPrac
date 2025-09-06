@@ -454,3 +454,45 @@ WHERE d.NAME <> 'Arts and Humanities'
 
 
 
+
+// 90 
+
+
+
+
+
+
+CREATE TABLE COLLECTION (
+    RED INT,
+    GREEN INT,
+    BLUE INT
+);
+
+
+
+INSERT INTO COLLECTION (RED, GREEN, BLUE) VALUES
+(65, 65, 87),
+(50, 50, 50),
+(30, 50, 100),
+(40, 50, 90),
+(92, 50, 50);
+
+
+
+
+SELECT 
+case 
+when RED = GREEN and GREEN = BLUE then 'GOOD'
+WHEN (RED = GREEN and RED !=BLUE)
+OR(RED = BLUE AND RED !=GREEN )
+or(GREEN = BLUE AND GREEN != RED) THEN 'BAD'
+
+else 'WORSE'
+end as type_of
+from collection
+
+
+
+
+
+
