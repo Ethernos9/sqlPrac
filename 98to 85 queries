@@ -1,0 +1,157 @@
+// 98
+SELECT 
+    customer,
+    TO_CHAR(SUM(debit) - SUM(credit), 'FM999999999.00') AS balance
+FROM transactions
+WHERE TO_CHAR(TO_TIMESTAMP(dt, 'YYYY-MM-DD HH24:MI:SS'), 'MM') = '12'
+GROUP BY customer
+ORDER BY customer;
+
+
+// 97
+
+SELECT DISTINCT name
+FROM employee
+GROUP BY name, phone, age
+HAVING COUNT(*) > 1;
+
+
+// 96
+
+SELECT score
+FROM student
+ORDER BY score DESC
+OFFSET 212 LIMIT 1;
+
+
+
+
+
+
+
+
+//95
+
+SELECT 
+    s.student_name, 
+    m.major_name
+FROM students s
+JOIN register r 
+    ON s.student_id = r.student_id
+JOIN majors m 
+    ON r.major_id = m.major_id
+ORDER BY s.student_id
+LIMIT 20;
+
+
+
+
+// 94
+
+SELECT p.NAME, p.SALARY
+FROM PROFESSOR p
+JOIN DEPARTMENT d ON p.DEPARTMENT_ID = d.ID
+WHERE d.NAME <> 'Arts and Humanities'
+  AND p.SALARY > (
+      SELECT MIN(salary)
+      FROM PROFESSOR
+      WHERE DEPARTMENT_ID = (
+          SELECT ID
+          FROM DEPARTMENT
+          WHERE NAME = 'Arts and Humanities'
+      )
+  );
+
+
+
+
+
+// 93
+
+ELECT p.NAME, p.SALARY
+FROM PROFESSOR p
+JOIN DEPARTMENT d ON p.DEPARTMENT_ID = d.ID
+WHERE d.NAME <> 'Arts and Humanities'
+  AND p.SALARY > (
+      SELECT MIN(salary)
+      FROM PROFESSOR
+      WHERE DEPARTMENT_ID = (
+          SELECT ID
+          FROM DEPARTMENT
+          WHERE NAME = 'Arts and Humanities'
+      )
+  );
+
+
+
+  // 92
+  SELECT DISTINCT p.NAME AS Professor_Name, c.NAME AS Course_Name
+FROM PROFESSOR p
+JOIN SCHEDULE s ON p.ID = s.PROFESSOR_ID
+JOIN COURSE c ON s.COURSE_ID = c.ID;
+
+
+// 91
+
+SELECT c.NAME AS Company_Name
+FROM COMPANY c
+JOIN SALARY s ON c.ID = s.COMPANY_ID
+GROUP BY c.ID, c.NAME
+HAVING AVG(s.SALARY) > 40000;
+
+
+
+
+90
+// 
+
+
+CREATE TABLE COLLECTION (
+    RED INT,
+    GREEN INT,
+    BLUE INT
+);
+
+
+
+INSERT INTO COLLECTION (RED, GREEN, BLUE) VALUES
+(65, 65, 87),
+(50, 50, 50),
+(30, 50, 100),
+(40, 50, 90),
+(92, 50, 50);
+
+
+
+
+SELECT 
+case 
+when RED = GREEN and GREEN = BLUE then 'GOOD'
+WHEN (RED = GREEN and RED !=BLUE)
+OR(RED = BLUE AND RED !=GREEN )
+or(GREEN = BLUE AND GREEN != RED) THEN 'BAD'
+
+else 'WORSE'
+end as type_of
+from collection
+
+
+
+// 89
+
+
+SELECT ID, NAME
+FROM CUSTOMER
+WHERE COUNTRY = 'USA' AND CREDITS > 100000
+ORDER BY ID ASC;
+
+
+
+
+// 88
+SELECT ID, ORDER_DATE, STATUS, CUSTOMER_ID
+FROM ORDERS
+WHERE STATUS <> 'DELIVERED'
+ORDER BY ORDER_DATE ASC, ID ASC
+LIMIT 5;
+
