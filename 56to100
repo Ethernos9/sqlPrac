@@ -2441,6 +2441,46 @@ ORDER BY visited_on;
 
 
 
+// 87
+
+
+-- Create the STUDENT table
+CREATE TABLE STUDENTP (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL,
+    SCORE FLOAT
+);
+
+-- Insert rows
+INSERT INTO STUDENTP (ID, NAME, SCORE) VALUES
+(1, 'Bob', 50),
+(2, 'John', 65.5),
+(3, 'Harry', 45),
+(4, 'Dick', 85),
+(5, 'Dev', 25),
+(6, 'Sid', 98),
+(7, 'Tom', 90),
+(8, 'Julia', 70.5),
+(9, 'Erica', 81),
+(10, 'Jerry', 85);
+
+
+
+SELECT * from  studentp
+
+
+
+
+
+SELECT id, name
+FROM studentp
+WHERE score > (SELECT AVG(score) FROM studentp)
+ORDER BY id ASC;
+
+
+
+
+
 
 
 
