@@ -2234,6 +2234,211 @@ on f.id = c.id
 
 
 
+// 82
+-- Table for Families
+CREATE TABLE FAMILIES (
+    ID VARCHAR(50) PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL,
+    FAMILY_SIZE INT NOT NULL
+);
+
+-- Table for Countries
+CREATE TABLE COUNTRIES (
+    ID VARCHAR(50) PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL,
+    MIN_SIZE INT NOT NULL
+);
+
+
+
+
+
+-- Insert data into FAMILIES
+INSERT INTO FAMILIES (ID, NAME, FAMILY_SIZE) VALUES
+('c00dac11bde74750b4d207b9c182a85f', 'Alex Thomas', 9),
+('eb6f2d3426694667ae3e79d6274114a4', 'Chris Gray', 2);
+
+-- Insert data into COUNTRIES
+INSERT INTO COUNTRIES (ID, NAME, MIN_SIZE) VALUES
+('023fd23615bd4ff4b2ae0a13ed7efec9', 'Bolivia', 2),
+('be247f73de0f4b2d810367cb26941fb9', 'Cook Islands', 4),
+('3e85ab80a6f84ef3b9068b21dbcc54b3', 'Brazil', 4);
+
+
+
+SELECT MAX(discounted_tours)as max_dis
+
+from 
+(
+
+SELECT 
+f.id, 
+f.name,
+COUNT(c.id) as discounted_tours
+
+FROM 
+families f
+cross join 
+countries c
+
+where 
+f.family_size>=c.min_size
+group by f.id , f.name
+
+
+
+) as family_tours
+
+
+
+
+
+
+// 83
+
+
+
+
+-- Table for FRIENDS
+CREATE TABLE FRIEND (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL,
+    ACTIVITY VARCHAR(100) NOT NULL
+);
+
+-- Table for ACTIVITIES
+CREATE TABLE ACTIVITIE(
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL
+);
+-- Insert into FRIENDS
+INSERT INTO FRIEND (ID, NAME, ACTIVITY) VALUES
+(1, 'James Smith', 'Horse Riding'),
+(2, 'Eric Jenkins', 'Eating'),
+(3, 'Sean Cox', 'Eating'),
+(4, 'Eric Schmidt', 'Horse Riding'),
+(5, 'Chris Evans', 'Eating'),
+(6, 'Jessica Breeds', 'Playing');
+
+-- Insert into ACTIVITIES
+INSERT INTO ACTIVITIE (ID, NAME) VALUES
+(1, 'Horse Riding'),
+(2, 'Eating'),
+(3, 'Playing');
+
+
+
+
+-- SELECT MAX(max_count) from (
+
+
+-- SELECT 
+-- activity,
+-- COUNT(*) as max_count
+-- from friend f
+-- group by  activity
+
+
+-- ) as maxn
+
+
+
+
+
+
+SELECT activity_counts.NAME
+FROM (
+    SELECT a.NAME, COUNT(f.ID) AS participants
+    FROM ACTIVITIE a
+    JOIN FRIEND f ON a.NAME = f.ACTIVITY
+    GROUP BY a.NAME
+) AS activity_counts
+WHERE participants NOT IN (
+    (SELECT MAX(cnt) FROM (
+        SELECT COUNT(f.ID) AS cnt
+        FROM ACTIVITIE a
+        JOIN FRIEND f ON a.NAME = f.ACTIVITY
+        GROUP BY a.NAME
+    ) AS max_sub),
+    (SELECT MIN(cnt) FROM (
+        SELECT COUNT(f.ID) AS cnt
+        FROM ACTIVITIE a
+        JOIN FRIEND f ON a.NAME = f.ACTIVITY
+        GROUP BY a.NAME
+    ) AS min_sub)
+);
+
+
+
+
+
+// 84
+
+
+
+CREATE TABLE CUSTOMERP (
+    id INT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    visited_on DATE NOT NULL,
+    amount INT NOT NULL
+);
+
+
+INSERT INTO CUSTOMERP (id, name, phone, visited_on, amount) VALUES
+(1, 'Julia', '1234567890', '2015-05-01', 100),
+(2, 'Samantha', '1234567890', '2015-05-02', 200),
+(3, 'Julia-Samantha', '1234567890', '2015-05-03', 300);
+
+
+
+with daily_spending as (
+  select visited_on , 
+  sum(amount) as amount
+  from customerp 
+  group by visited_on
+)
+
+
+select 
+
+visited_on,
+amount,
+ROUND(AVG(amount)OVER (
+order by visited_on
+rows between 6 preceding
+and current row
+)) as avg_amount
+
+
+
+
+
+
+
+
+
+
+
+
+WITH daily_spending AS (
+    SELECT visited_on, SUM(amount) AS amount
+    FROM CUSTOMERS
+    GROUP BY visited_on
+)
+SELECT 
+    visited_on,
+    amount,
+    ROUND(AVG(amount) OVER (
+        ORDER BY visited_on
+        ROWS BETWEEN 6 PRECEDING AND CURRENT ROW
+    ), 2) AS avg_amount
+FROM daily_spending
+ORDER BY visited_on;
+
+
+
+
 
 
 
