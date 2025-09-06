@@ -396,3 +396,61 @@ ORDER BY visited_on;
 
 
 
+// 93
+
+
+-- Create DEPARTMENT table
+CREATE TABLE DEPARTMENT (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL
+);
+
+-- Insert data into DEPARTMENT
+INSERT INTO DEPARTMENT (ID, NAME) VALUES
+(3, 'Biological Sciences'),
+(5, 'Technology'),
+(6, 'Humanities & Social Sciences'),
+(2, 'Clinical Medicine'),
+(4, 'Arts and Humanities'),
+(1, 'Physical Sciences');
+
+-- Create PROFESSOR table
+CREATE TABLE PROFESSOR (
+    ID INT PRIMARY KEY,
+    NAME VARCHAR(100) NOT NULL,
+    DEPARTMENT_ID INT,
+    SALARY INT,
+    FOREIGN KEY (DEPARTMENT_ID) REFERENCES DEPARTMENT(ID)
+);
+
+-- Insert data into PROFESSOR
+INSERT INTO PROFESSOR (ID, NAME, DEPARTMENT_ID, SALARY) VALUES
+(1, 'Shauna Rivera', 1, 22606),
+(8, 'Ruth Price', 3, 9287),
+(9, 'Julie Gonzalez', 4, 18870),
+(2, 'Craig Elliott', 5, 27524),
+(10, 'Scott Butler', 1, 26200),
+(3, 'Nancy Russell', 2, 7076),
+(4, 'Clarence Johnson', 1, 7249),
+(7, 'Louis Schmidt', 1, 13437),
+(5, 'Terri Thompson', 3, 28432),
+(6, 'Keith Gilbert', 5, 12610);
+
+
+
+SELECT p.NAME, p.SALARY
+FROM PROFESSOR p
+JOIN DEPARTMENT d ON p.DEPARTMENT_ID = d.ID
+WHERE d.NAME <> 'Arts and Humanities'
+  AND p.SALARY > (
+      SELECT MIN(salary)
+      FROM PROFESSOR
+      WHERE DEPARTMENT_ID = (
+          SELECT ID
+          FROM DEPARTMENT
+          WHERE NAME = 'Arts and Humanities'
+      )
+  );
+
+
+
