@@ -321,3 +321,137 @@ ORDER BY EXTRACT(MONTH FROM s.dt::date), total_sales DESC;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+// 34 
+SELECT 
+    wallet,
+    COUNT(*) AS total_transactions,
+    ROUND(SUM(CASE WHEN amount > 0 THEN amount ELSE 0 END), 2) AS total_bought,
+    ROUND(SUM(CASE WHEN amount < 0 THEN -amount ELSE 0 END), 2) AS total_sold
+FROM transactions
+WHERE dt >= '2024-02-01' 
+  AND dt < '2024-03-01'
+GROUP BY wallet
+ORDER BY wallet;
+
+
+
+
+
+// 35
+
+
+
+SELECT 
+    e.email,
+    COALESCE(SUM(l.days_taken), 0) AS leave_days_taken,
+    CASE 
+        WHEN COALESCE(SUM(l.days_taken), 0) <= 20 THEN 'Within Limit'
+        ELSE 'Exceeded'
+    END AS leave_status
+FROM employees e
+LEFT JOIN leave_records l 
+    ON e.id = l.employee_id
+    AND l.leave_dt >= '2023-01-01' 
+    AND l.leave_dt < '2024-01-01'
+GROUP BY e.email
+ORDER BY e.email ASC;
+
+
+
+
+
+// 36
+
+
+
+SELECT
+    c.name,
+    SUM(e.emails_sent) AS total_emails_sent,
+    SUM(e.emails_opened) AS total_emails_opened,
+    ROUND(SUM(e.emails_opened)::numeric / SUM(e.emails_sent) * 100, 2) AS open_rate
+FROM campaigns c
+JOIN email_stats e ON c.id = e.campaign_id
+GROUP BY c.name
+HAVING (SUM(e.emails_opened)::numeric / SUM(e.emails_sent) * 100) > 50
+ORDER BY open_rate DESC, c.name ASC;
+
+
+
+// 37 
+
+
+//37
+
+SELECT * FROM bonds
+
+
+SELECT * FROM maturities
+
+
+SELECT 
+    b.name,
+    COUNT(m.maturity) AS maturity_dates,
+    MIN(m.maturity) AS earliest_maturity,
+    MAX(m.maturity) AS latest_maturity,
+    CEIL(AVG(m.maturity - make_date(2023, 9, 13)))::INT AS avg_days_to_maturity
+FROM 
+    bonds b
+JOIN 
+    maturities m ON b.id = m.bond_id
+GROUP BY 
+    b.name
+HAVING 
+    CEIL(AVG(m.maturity - make_date(2023, 9, 13))) > 365
+ORDER BY 
+    b.name ASC;
+
+
+
+
+// 38
+
+
+
+SELECT 
+b.name,
+COUNT(*),
+MIN(rate),
+MAX(rate),
+ROUND(AVG(rate),2)
+
+FROM 
+bonds b 
+join 
+interest_rates i 
+on b.id = i.bond_id
+group by b.name
+having AVG(rate)> 3
+order by b.name
+
+// 39
+
+
+
+
+SELECT bo.name,
+ROUND(SUM(b.annual_coupon * b.coupons_remaining ),2)
+
+FROM 
+bondholders bo 
+join bondholders_bonds bb
+on bo.id = bb.bondholder_id
+join  bonds b
+on b.id = bb.bond_id
+group by bo.name
+having SUM(b.annual_coupon * b.coupons_remaining ) > 10000
