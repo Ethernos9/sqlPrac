@@ -455,3 +455,26 @@ join  bonds b
 on b.id = bb.bond_id
 group by bo.name
 having SUM(b.annual_coupon * b.coupons_remaining ) > 10000
+
+
+
+
+// 40
+
+
+
+SELECT 
+i.email,
+COUNT(c.investor_id) as investments,
+min(c.cash_flow) as min_flow,
+max(c.cash_flow) as max_flow,
+ROUND(avg(c.cash_flow),2) as avg_flow
+from investors i 
+join 
+cash_flows c 
+on
+i.id = c.investor_id
+group by i.email
+having SUM(c.cash_flow) > 1000000
+order by i.email
+
