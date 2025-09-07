@@ -720,6 +720,32 @@ LIMIT 3;
 
 
 
+
+
+
+// 15
+SELECT 
+c.email,
+COUNT(p.customer_id),
+SUM(p.amount)
+
+
+from customer c
+join purchases p 
+on c.id = p.customer_id
+where EXTRACT (YEAR FROM p.dt) = 2024
+and extract (month from p.dt)= 3
+
+group by c.email 
+
+
+
+
+
+
+
+
+
 // 16
 CREATE TABLE applicants (
     id INT PRIMARY KEY,
