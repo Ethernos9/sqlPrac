@@ -705,6 +705,20 @@ limit 3
 
 
 
+// 14 
+SELECT 
+    p.name,
+    p.price,
+    COUNT(w.product_id) AS total_wishes
+FROM products p
+JOIN wishlists w 
+    ON p.id = w.product_id
+WHERE p.in_stock = 1
+GROUP BY p.id, p.name, p.price
+ORDER BY total_wishes DESC, p.name ASC
+LIMIT 3;
+
+
 
 // 16
 CREATE TABLE applicants (
