@@ -1819,6 +1819,38 @@ ORDER BY a.username;
 
 
 
+// 50
+
+SELECT 
+a.username,
+a.email,
+
+
+MAX(t.name),
+SUM(r.amount) as total_consumption_amount,
+SUM(r.amount * t.cost)
+from
+
+
+accounts a 
+join readings r 
+on a.id  = r.account_id
+
+join taris t
+on t.id = r.tari_id
+
+
+
+
+group by a.username,
+a.email
+
+
+
+
+
+
+
 
 
 
