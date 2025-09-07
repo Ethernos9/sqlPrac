@@ -999,10 +999,73 @@ group by u.email
 order by u.email
  
 
+// 21
+SELECT 
+    u.email,
+    COUNT(t.amount) AS total_transactions,
+    TO_CHAR(SUM(t.amount), 'FM999999990.00') AS total_amount
+FROM users u
+JOIN transactions t ON u.id = t.user_id
+WHERE t.dt >= '2023-01-01' 
+  AND t.dt < '2024-01-01'
+GROUP BY u.email
+ORDER BY u.email;
+
+// 22
+SELECT 
+    c.name,
+    ROUND(AVG(t.amount), 2)::DECIMAL(10,2) AS avg_transaction_amount
+FROM coins c
+JOIN transactions t ON c.id = t.coin_id
+WHERE t.dt >= '2023-01-01' 
+  AND t.dt < '2024-01-01'
+GROUP BY c.name
+ORDER BY avg_transaction_amount ASC
+LIMIT 3;
 
 
 
+//23
+SELECT 
+    c.name,
+    COUNT(t.amount) AS total_transactions,
+    MIN(t.amount)::DECIMAL(10,2) AS min_amount,
+    MAX(t.amount)::DECIMAL(10,2) AS max_amount,
+    ROUND(AVG(t.amount), 2)::DECIMAL(10,2) AS avg_amount
+FROM coins c
+JOIN transactions t ON c.id = t.coin_id
+WHERE t.dt >= '2024-03-01' 
+  AND t.dt < '2024-04-01'
+GROUP BY c.name
+ORDER BY total_transactions DESC, c.name ASC;
 
+
+// 24
+
+SELECT 
+    extension,
+    COUNT(*) AS total_suspicious_files
+FROM suspicious_files
+WHERE is_suspicious = TRUE
+  AND scan_dt >= '2024-03-01 00:00:00'
+  AND scan_dt < '2024-04-01 00:00:00'
+GROUP BY extension
+ORDER BY total_suspicious_files DESC, extension ASC
+LIMIT 5;
+
+
+
+// 25  
+SELECT 
+    c.email,
+    COUNT(d.mac_address) AS total_scanned_devices
+FROM clients c
+JOIN devices d ON c.id = d.client_id
+WHERE d.is_scanned = TRUE
+  AND d.scheduled_scan_dt >= '2024-03-01 00:00:00'
+  AND d.scheduled_scan_dt < '2024-04-01 00:00:00'
+GROUP BY c.email
+ORDER BY c.email ASC;
 
 
 //26
